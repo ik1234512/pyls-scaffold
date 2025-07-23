@@ -2,6 +2,7 @@
 # this file, which is itself a "module".
 import argparse
 import os
+import time 
 
 
 def main() -> None:
@@ -42,40 +43,48 @@ def main() -> None:
     # flag, it will print out all of the specification above in a nice format
     # as help. This is a convention employed by most command line programs.
     args = parser.parse_args()
+    pyls(args.dirname, args.longform, args.formatted)
+    
+
 
 
 def pyls(dirname: str, longform: bool, formatted: bool) -> None:
     """
-    DATA REPRESENTATION
-    -------------------
-
-    In this case, we're choosing a **representation** where we represent
-    the directory name to list as a string and the choice of longform and
-    formatted output as two boolean values.
-   
-    SIGNATURE 
-    ---------
-    The "signature" of the procedure below can be written as
-              str bool bool -> None
-
     PURPOSE
     -------
+    Prints the contents of the given directory.
 
-    TODO: Replace this content with a sentence or two describing what this
-    function does.
-    - :param dirname: TODO: Description of `dirname` parameter.
-    - :param longform: TODO: Description of `longform` parameter.
-    - :param formatted: TODO: Description of `formatted` parameter.
+    - :param dirname: The path to the directory whose contents are to be listed.
+    - :param longform: If True, show detailed file info like modification time and size.
+    - :param formatted: If True, append '/' to directories and '*' to executable files.
 
-    EXAMPLES
+    EXAMPLES    
     --------
-
-    TODO: Below, give a few examples of what you expect the procedure to do when you
-    give various inputs. This can help you think about what to implement.
-    Consider various possible combinations.
+    pyls(".", False, False)
+    pyls("myfolder", True, False)
+    pyls("/usr", False, True)
+    pyls(".", True, True)
     """
-    # Replace the "pass" below with your implementation.
-    pass
+
+    entries = os.listdir(dirname)
+    for entry in sorted(entries):
+        path = os.path.join(dirname, entry)
+
+        marker = ""
+        if formatted:
+            if os.path.isdir(path):
+                marker = "/"
+            elif os.access(path, os.X_OK):
+                marker = ""
+
+        elif longform:
+            stats = os.stat(path)
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(stats.st_mtime))
+            size = stats.st_size
+            print(f"last accessed{timestamp}, size {size:>10} {entry}{marker}")
+        else:
+            print(f"{entry}{marker}")
+
 
 
 # A python module may be loaded in one of two ways --
@@ -87,3 +96,4 @@ def pyls(dirname: str, longform: bool, formatted: bool) -> None:
 #    importing python file. In this case, __name__ will be "myfile" and not "__main__".
 if __name__ == "__main__":
     main()
+
