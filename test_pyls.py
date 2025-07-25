@@ -69,7 +69,7 @@ def test_basic_listing_with_capture(capture, mock_listdir_basic):
 
 def test_pyls_sample_directory():
     """
-    Test pyls on a real temporary directory with sample files.
+    Test pyls on a temporary directory with sample files.
     """
 
     tmp_dir = "tmp_test_pyls"
